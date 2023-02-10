@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn React 20 Day Challenge</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel"> 
+          function Topheader(props){
+            return(
+                <h1>Hello, {props.name}. Welcome to my Restaurant</h1>
+            );
+          }
+          function Middleheader(props){
+            return(
+                <section>
+                <ul>
+                {props.foods.map((food)=> (
+                    <li key={food.id}>{food.title}</li>
+                    ))}
+                    </ul>
+                    </section>
+            );
+          }
+          function Fotter(props){
+            return(
+                <p>Copywrite {props.year}</p>
+            );
+          }
+          const foods=[
+            "Chicken Chowmen",
+            "Kema Noodles",
+            "Buff Momo",
+            "Ghol Momo"
+          ]
+          const foodsObjects =foods.map((food, i) => 
+          ({
+            id:i,
+            title:food
+          })
+          );
+          function App(){
+            return(
+                <div>
+                    <Topheader name='Aaryan'/>
+                    <Middleheader foods={foodsObjects}/>    
+                    <Fotter year={new Date().getFullYear()}/>    
+                </div>
+            );
+          }
+        ReactDOM.render(
+<App />,
+            document.getElementById("root")
+        );    
+    </script>
+</body>
+</html>
