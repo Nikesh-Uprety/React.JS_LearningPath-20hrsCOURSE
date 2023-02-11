@@ -20,6 +20,8 @@
           function Middleheader(props){
             return(
                 <section>
+                    <img height={200}
+                    src="https://d6vdma9166ldh.cloudfront.net/media/images/1560157149351-Advantages-of-Learning-React-JS.jpg" alt=""/>
                 <ul>
                 {props.foods.map((food)=> (
                     <li key={food.id}>{food.title}</li>
@@ -47,11 +49,11 @@
           );
           function App(){
             return(
-                <div>
+                <React.Fragment>
                     <Topheader name='Aaryan'/>
                     <Middleheader foods={foodsObjects}/>    
                     <Fotter year={new Date().getFullYear()}/>    
-                </div>
+                </React.Fragment>
             );
           }
         ReactDOM.render(
