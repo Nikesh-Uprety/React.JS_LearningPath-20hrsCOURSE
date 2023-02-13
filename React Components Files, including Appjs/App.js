@@ -1,35 +1,56 @@
-
-const nepal_peaks =[
-  {name:"Sagarmatha", elevation:8848},
-  {name:"Makalu", elevation:7856},
-  {name:"Annapurna", elevation:6987},
-  {name:"Macchapuchera", elevation:7655}
-];
-function List({data, renderItem, renderEmpty}){
-  return !data.length ? (
-    renderEmpty
-  ):(
-    <ul>
-      {data.map((item)=>
-      (
-        <li key={item.name}>
-          {renderItem(item)}
-        </li>
-      )
-      )}
-    </ul>
-  )
-}
-function App() {
+import React from "react";
+import { Link , Outlet} from "react-router-dom";
+function Home() {
 return (
-  <List data ={nepal_peaks}
-  renderEmpty={<p>This is empty list...</p>}
-  renderItem={(item)=>(
-    <>
-    {item.name} -{item.elevation} meters.
-    </>
-  )}
-  />
+  <div>
+    <nav>
+      <Link to ="/">Home</Link>
+      <Link to ="/about">About</Link>
+      <Link to ="/contact">Contact</Link>
+    </nav>
+    <h1>My website</h1>
+  </div>
 );
 }
-export default App;
+
+export function About() {
+return (
+  <div>
+    <nav>
+      <Link to ="/">Home</Link>
+      <Link to ="/about">About</Link>
+      <Link to ="/contact">Contact</Link>
+    </nav>
+    <h1>About Us</h1>
+    <Outlet/>
+  </div>
+);
+}
+export function History(){
+
+  return(
+    <div>
+      <h1>Our History</h1>
+    </div>
+  );
+}
+export function Contact() {
+return (
+  <div>
+    <nav>
+      <Link to ="/">Home</Link>
+      <Link to ="/about">About</Link>
+      <Link to ="/contact">Contact</Link>
+    </nav>
+    <h1>Content Us</h1>
+  </div>
+);
+}
+export function App() {
+return (
+  <div>
+<Home/>
+  </div>
+);
+}
+
