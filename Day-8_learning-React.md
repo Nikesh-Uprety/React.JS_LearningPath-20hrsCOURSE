@@ -153,4 +153,4 @@ if (!article){
     )
 ```
 # The link to the front end part of the project is:
-
+https://funny-mochi-d6c0ae.netlify.app/
