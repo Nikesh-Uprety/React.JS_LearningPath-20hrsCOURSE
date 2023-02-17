@@ -1,11 +1,11 @@
-# Setting up and Express server for Backend
+# Setting up an Express server for Backend
 - I created an folder outside the project folder named `my-blog-backend`.
 - Then we runned the command `npm init -y` by opening the terminal inside the `my-blog-backend` folder.
 - This create us an package.json file helps to track the different thing of our backend.
 ### Installing Express
 - run the command `npm install express`
 - Then we created src folder, in which `server.js` file is created.
-- Also to import and export the files easily, we added `"type": "module",` in our `package.json` file after the `"main":"indes.js"`.
+- Also to import and export the files easily, we added `"type": "module",` in our `package.json` file after the `"main":"index.js"`.
 # Testing an Express server with Postman
 - I download and install postman, which is used to test our server.
 - Then we created an simple get req, on localhost 8000, Saying `Hello!` inside the `server.js` file we previously created.
