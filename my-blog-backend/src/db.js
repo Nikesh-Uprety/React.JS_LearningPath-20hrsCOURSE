@@ -9,4 +9,4 @@ async function connectToDB(cb){
 export {
     db,
     connectToDB,
-};
+}

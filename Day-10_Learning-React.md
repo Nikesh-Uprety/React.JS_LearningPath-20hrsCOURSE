@@ -1,9 +1,9 @@
 # Setting up MongoDB on our computer
-- I downloaded the mongodb file from the offical website,
+- I downloaded the mongodb file from the Offical website,
 - Then I also downloaded the `mongosh` installation archive for my operating system.,
 - And then added  `mongosh` binary to the `PATH` environment variable,
 - Then install the mongodb which I previously downloaded.
-- To check if the PATH is successfully added or not, open the command panel and type `mongosh` if it runs the command, the path is added successfully,
+- To check if the PATH is Successfully added or not, open the command panel and type `mongosh` if it runs the command, the path is added Successfully,
 - Below is the example;
 ```bash
 C:\Users\Acer\Desktop\Learn_React\my-blog-backend>mongosh

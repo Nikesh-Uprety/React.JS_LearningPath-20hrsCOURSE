@@ -48,7 +48,7 @@ app.post('/api/articles/:name/comments', async (req, res) => {
 });
 
 connectToDB(() => {
-    console.log('Successfully connected to database!');
+    console.log('Successfully connected to Database!');
     app.listen(8000, () => {
         console.log('Server is listening on port 8000');
     });
