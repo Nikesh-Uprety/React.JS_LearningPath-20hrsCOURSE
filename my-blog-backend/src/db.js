@@ -6,7 +6,7 @@ async function connectToDB(cb){
     db = client.db('reac-blog-db');
     cb();
 }
-export {
+export{
     db,
     connectToDB,
 }

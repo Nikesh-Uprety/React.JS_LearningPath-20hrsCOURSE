@@ -4,7 +4,7 @@
 - So, we head towards `console.firebase.google.com` and created an project names `learn-reactjs`
 - After I went to `authentication` inside the build menu, and added `emai` authentication and also created an dummy user for testing purposes.
 # Adding login-signup to our front-end
-- I have create two new page inside the `pages` folder, one page named `loginpage.js` for user login and page named `CreateUserAccount.js` for the user signup page, 
+- I have created two new page inside the `pages` folder, one page named `loginpage.js` for user login and page named `CreateUserAccount.js` for the user signup page, 
 - Then I have improted the paged into my main `app.js` file and setting up the Router for each page.
 ```javascript
 import LoginPage from './pages/LoginPage'
