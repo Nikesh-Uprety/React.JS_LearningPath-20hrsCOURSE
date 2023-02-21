@@ -4,7 +4,7 @@
 - So, we head towards `console.firebase.google.com` and created an project names `learn-reactjs`
 - After I went to `authentication` inside the build menu, and added `emai` authentication and also created an dummy user for testing purposes.
 # Adding login-signup to our front-end
-- I have created two new page inside the `pages` folder, one page named `loginpage.js` for user login and page named `CreateUserAccount.js` for the user signup page, 
+- I have create two new page inside the `pages` folder, one page named `loginpage.js` for user login and page named `CreateUserAccount.js` for the user signup page, 
 - Then I have improted the paged into my main `app.js` file and setting up the Router for each page.
 ```javascript
 import LoginPage from './pages/LoginPage'
@@ -267,11 +267,191 @@ connectToDb(() => {
     });
 })
 ```
-## Making overall upvote and comment more functionable,
-- This is a very long process and I had to consider a number of things to make this right,
-- I started by using something called `authtoken` , it helps to identify everytime the user has login and also, if onone has login,
-- Some of the files that were edited during these process , their final codes are,
-`articlepage.js`
+
+# Protecting endpoints using auth-tokens
+- Remember it is important to protect our endpoint so that the, users cann't give muptiple upvotes to single article and cann't add an comment if not logged in.
+- In  both of the above cases what we are going to do is, protect our end point by basically checking if the users that made an request was logged in or not.
+- Now, I am introducting authtoken in my code, and everytime an user made an request , along with the request the authoken is added there. This helps the front-end to proves the user is logged in and , that they who they say they are.
+- We start by getting the authtoken from the firebaseadmin `model`
+```javascript
+  
+
+
+app.use(async (req, res, next) => {
+    const { authtoken } = req.headers;
+
+    if (authtoken) {
+        try {
+            req.user = await admin.auth().verifyIdToken(authtoken);
+        } catch (e) {
+            return res.sendStatus(400);
+        }
+    }
+
+    req.user = req.user || {};
+
+    next();
+});
+
+```
+
+## Upvotes config, 
+- This is important to display that if the user has already upvoted the article or hasnot upvoted already so that He/she can upvote the article., 
+- So to do so, I have somw changes in my articles endpoint,
+- Here is the code,
+```javascript
+app.get('/api/articles/:name', async (req, res) => {
+    const { name } = req.params;
+    const { uid } = req.user; // The authotoken is bringed form the previous funtion.
+
+    const article = await db.collection('articles').findOne({ name });
+
+    if (article) {
+        const upvoteIds = article.upvoteIds || [];
+        article.canUpvote = uid && !upvoteIds.includes(uid);
+        res.json(article);
+    } else {
+        res.sendStatus(404);
+    }
+});
+```
+- And also, I need to protect the endpoint, and uses shouldnot have acces to upvote and comments if they are not logged in, to do so, 
+- Here is an example,
+```javascript
+app.use((req, res, next) => {
+    if (req.user) {
+        next();
+    } else {
+        res.sendStatus(401);
+    }
+});
+
+```
+- Now, I make the upvotes function actually work and setting all criteries, such as the user can only upvotes once,
+- To do so I made an `push` request which send in the uid, when upvoting, so that next if the upvote request is comming form the uid that previously upvotes it doesnot made the request.
+- Here is the the code example,
+```javascript
+app.put('/api/articles/:name/upvote', async (req, res) => {
+    const { name } = req.params;
+    const { uid } = req.user;
+
+    const article = await db.collection('articles').findOne({ name });
+
+    if (article) {
+        const upvoteIds = article.upvoteIds || [];
+        const canUpvote = uid && !upvoteIds.includes(uid);
+   
+        if (canUpvote) {
+            await db.collection('articles').updateOne({ name }, {
+                $inc: { upvotes: 1 },
+                $push: { upvoteIds: uid },
+            });
+        }
+
+        const updatedArticle = await db.collection('articles').findOne({ name });
+        res.json(updatedArticle);
+    } else {
+        res.send('That article doesn\'t exist');
+    }
+});
+
+```
+## Comments config
+- I want to show the email of the user in the comments section instead of the, name that the user has the option to take, 
+- To do so, I removed the `postedBy` property and add `email property` from `req.user`.
+- The example is ,
+```javascript
+app.post('/api/articles/:name/comments', async (req, res) => {
+    const { name } = req.params;
+    const { text } = req.body;
+    const { email } = req.user;
+
+    await db.collection('articles').updateOne({ name }, {
+        $push: { comments: { postedBy: email, text } },
+    });
+    const article = await db.collection('articles').findOne({ name });
+    if (article) {
+        res.json(article);
+    } else {
+        res.send('That article doesn\'t exist!');
+    }
+});
+```
+
+## Setting authtoken every time the user request
+- This is how the client proves that the user is logged in to the server.
+- To do so, In out `article.js` page every where that I made can request with axios we are going to have to include the header with user authtoken.
+- Here is the example,
+```javascript
+    useEffect(() => {
+    const loadArticleInfo = async () => {
+        const token = user && await user.getIdToken();
+        const headers = token ? { authtoken: token } : {};
+        const response = await axios.get(`/api/articles/${articleId}`, { headers });
+        const newArticleInfo = response.data;
+        setArticleInfo(newArticleInfo);
+    }
+```
+- 
+- All we need to do is adding thes avove aruguments to others request,
+- For `upvotes`
+```javascript
+const addUpvote = async () => {
+  const token = user && await user.getIdToken();
+  const headers = token ? { authtoken: token } : {};
+  const response = await axios.put(`/api/articles/${articleId}/upvote`, null, { headers });
+  const updatedArticle = response.data;
+  setArticleInfo(updatedArticle);
+}
+
+```
+- For `comments` I added those same arguments on the `addcomments.js` file,
+```javascript
+const AddCommentForm = ({ articleName, onArticleUpdated }) => {
+    const [name, setName] = useState('');
+    const [commentText, setCommentText] = useState('');
+    const { user } = useUser();
+
+    const addComment = async () => {
+      const token = user && await user.getIdToken();
+      const headers = token ? { authtoken: token } : {};
+        const response = await axios.post(`/api/articles/${articleName}/comments`, {
+            postedBy: name,
+            text: commentText,
+        },{
+          headers,
+        });
+        const updatedArticle = response.data;
+        onArticleUpdated(updatedArticle);
+        setName('');
+        setCommentText('');
+    }
+
+```
+## Making changes on the addCommentsForm
+- I change the input type name and instead of user having to enter therir name before commenting, the name part converts into email and the user email is taken to add comment automatically, so that it cannot be faked.
+- Here is the code example,
+```javascript
+    eturn (
+    <div id="add-comment-form">
+      <h3>Add a comment</h3>
+      {user && <p>You are posting as {user.email}</p>}
+      <label>
+        
+        <textarea
+                    value={commentText}
+                    onChange={e => setCommentText(e.target.value)}
+                    rows="4"
+                    cols="50" />
+            </label>
+      <button onClick={addComment}>Add Comment</button>
+    </div>
+```
+## Making the upvote button Dyanamic
+- What it does it that, if the user has already upvoted, it displays already upvoted and if the user hasn't it display upvote button,
+- I created an `canUpvote` element which is set to false in default,
+- And one last thinng, I want to make that this only happens if the user is logged in,
+- So here is the code example,
 ```javascript
 import React from "react";
 import { useState, useEffect } from "react";
@@ -299,9 +479,9 @@ const ArticlePage = () => {
         setArticleInfo(newArticleInfo);
     }
 
-    if (isLoading) {
+    if (!isLoading) {
         loadArticleInfo();
-    }
+    } // This checks if the user is logged in or not,
 }, [isLoading , user]);
 
 
@@ -310,7 +490,7 @@ const article = articles.find(article => article.name === articleId);
 const addUpvote = async () => {
   const token = user && await user.getIdToken();
   const headers = token ? { authtoken: token } : {};
-  const response = await axios.put(`/api/articles/${articleId}/upvote`, null, { headers });
+  const response = await axios.put(`/api/articles/${articleId}/upvote`, null, { headers }); // adding authoken headers
   const updatedArticle = response.data;
   setArticleInfo(updatedArticle);
 }
@@ -324,7 +504,7 @@ const addUpvote = async () => {
   <h1>{article.title}</h1>
     <div className="upvotes-section">
     {user
-        ?  <button onClick={addUpvote}>{'Upvote'}</button>
+        ?  <button onClick={addUpvote}>{canUpvote ? 'Upvote' : 'Already Upvoted'}</button> /// This is the part that makes the upvote dynamic 
         :  <button >Login to Upvote</button>}
          
   <p>This article has {articleinfo.upvotes} upvote(s)</p>
@@ -345,32 +525,12 @@ const addUpvote = async () => {
 };
 export default ArticlePage;
 
-
 ```
-`navbar.js`
+## Updating navbar
+- The navbar must include and logout or login button depending on the state of the users is logged in or out, 
+- So the code example is 
 ```javascript
-import { Link, useNavigate } from 'react-router-dom';
-import { getAuth, signOut } from 'firebase/auth';
-import useUser from '../hooks/useUser';
-
-const NavBar = () => {
-    const { user } = useUser();
-    const navigate = useNavigate();
-
-    return (
-        <nav>
-            <ul>
-                <li>
-                    <Link to="/">Home</Link>
-                </li>
-                <li>
-                    <Link to="/about">About</Link>
-                </li>
-                <li>
-                    <Link to="/articles">Articles</Link>
-                </li>
-            </ul>
-            <div className="nav-right">
+  <div className="nav-right">
                 {user
                     ? <button onClick={() => {
                         signOut(getAuth());
@@ -379,161 +539,5 @@ const NavBar = () => {
                         navigate('/login');
                     }}>Log In</button>}
             </div>
-        </nav>
-    );
-}
-
-export default NavBar;
-```
-`server.js`
-```javascript
-import fs from 'fs';
-import admin from 'firebase-admin';
-import express from 'express';
-import { db, connectToDB } from './db.js';
-
-const credentials = JSON.parse(
-    fs.readFileSync('./credentials.json')
-);
-admin.initializeApp({
-    credential: admin.credential.cert(credentials),
-});
-
-const app = express();
-app.use(express.json());
-
-app.use(async (req, res, next) => {
-    const { authtoken } = req.headers;
-
-    if (authtoken) {
-        try {
-            req.user = await admin.auth().verifyIdToken(authtoken);
-        } catch (e) {
-            return res.sendStatus(400);
-        }
-    }
-
-    req.user = req.user || {};
-
-    next();
-});
-
-app.get('/api/articles/:name', async (req, res) => {
-    const { name } = req.params;
-    const { uid } = req.user;
-
-    const article = await db.collection('articles').findOne({ name });
-
-    if (article) {
-        const upvoteIds = article.upvoteIds || [];
-        article.canUpvote = uid && !upvoteIds.includes(uid);
-        res.json(article);
-    } else {
-        res.sendStatus(404);
-    }
-});
-
-app.use((req, res, next) => {
-    if (req.user) {
-        next();
-    } else {
-        res.sendStatus(401);
-    }
-});
-
-app.put('/api/articles/:name/upvote', async (req, res) => {
-    const { name } = req.params;
-    const { uid } = req.user;
-
-    const article = await db.collection('articles').findOne({ name });
-
-    if (article) {
-        const upvoteIds = article.upvoteIds || [];
-        const canUpvote = uid && !upvoteIds.includes(uid);
-   
-        if (canUpvote) {
-            await db.collection('articles').updateOne({ name }, {
-                $inc: { upvotes: 1 },
-                $push: { upvoteIds: uid },
-            });
-        }
-
-        const updatedArticle = await db.collection('articles').findOne({ name });
-        res.json(updatedArticle);
-    } else {
-        res.send('That article doesn\'t exist');
-    }
-});
-
-app.post('/api/articles/:name/comments', async (req, res) => {
-    const { name } = req.params;
-    const { text } = req.body;
-    const { email } = req.user;
-
-    await db.collection('articles').updateOne({ name }, {
-        $push: { comments: { postedBy: email, text } },
-    });
-    const article = await db.collection('articles').findOne({ name });
-
-    if (article) {
-        res.json(article);
-    } else {
-        res.send('That article doesn\'t exist!');
-    }
-});
-
-connectToDB(() => {
-    console.log('Successfully connected to database!');
-    app.listen(8000, () => {
-        console.log('Server is listening on port 8000');
-    });
-})
-```
-`addcomments.js`
-```javascript
-import React from "react";
-import { useState } from "react";
-import axios from 'axios';
-import useUser from '../hooks/useUser';
-
-const AddCommentForm = ({ articleName, onArticleUpdated }) => {
-    const [name, setName] = useState('');
-    const [commentText, setCommentText] = useState('');
-    const { user } = useUser();
-
-    const addComment = async () => {
-      const token = user && await user.getIdToken();
-      const headers = token ? { authtoken: token } : {};
-        const response = await axios.post(`/api/articles/${articleName}/comments`, {
-            postedBy: name,
-            text: commentText,
-        },{
-          headers,
-        });
-        const updatedArticle = response.data;
-        onArticleUpdated(updatedArticle);
-        setName('');
-        setCommentText('');
-    }
-
-
-  return (
-    <div id="add-comment-form">
-      <h3>Add a comment</h3>
-      {user && <p>You are posting as {user.email}</p>}
-      <label>
-        
-        <textarea
-                    value={commentText}
-                    onChange={e => setCommentText(e.target.value)}
-                    rows="4"
-                    cols="50" />
-            </label>
-      <button onClick={addComment}>Add Comment</button>
-    </div>
-  )
-}
-export default AddCommentForm;
-
 ```
 - Finally after making different sorts of changes, the development phase is completed and the app is running smoothly.
