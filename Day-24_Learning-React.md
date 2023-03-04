@@ -4,7 +4,7 @@ So, we created an `.env` file which contains JWT_SECRET key that I had set,
 Next on the `singUpRoute` on the backend, we added that JWT_SECRET token and send to out routes, also we added an expireIn and errorr if something in the server .
 
 Now, I sent an post req to the route with email and password in JSON format and I received an JSON token as a response, .
-![[PostmanJsonResReq.png]]
+![PostmanJsonResReq.png](Assests/PostmanJsonResReq.png)
 ## For loginInRoute,
 Same as before we imported some library we need such as `bcrypt` `jwt` and `getDbConnection`.
 Now after that we have create an route which takes res.body which inlcudes email and password and with post method , then after connecting with our DB we finded that email user in our database and set an condition which throws error if the user doesn't exits and if the user does exits the, password hash is checked and after that the it is signed with the JWT_SECRET and JSON token is generated.
@@ -47,11 +47,11 @@ export const logInRoute = {
 
 
 
-![LoginINROute.png](Assets/LoginINROute.png)
+![LoginINROute.png](Assests/LoginINROute.png)
 
 And if I enter, wronge email or password, it says unauthorized.
 
-![LOginROuteTest.png](Assets/LOginROuteTest.png)
+![LOginROuteTest.png](Assests/LOginROuteTest.png)
 ## Implementing JWTs on the front end.
 We are going to create two seperate hook ` useToken` & `useUser` in out auth folder .
 
@@ -189,10 +189,10 @@ export const PrivateRoute = props => {
 Now I runned my project and checked if it is actually working or not,
 First I signed up a new user and Check the JSON web token it generated for that user.
 
-![20230304201848.png](Assets/20230304201848.png)
+![20230304201848.png](Assests/20230304201848.png)
 Then if we delete our token, we get logged out and redirect to the login page.
 
-![20230304201848.png](Assets/20230304201955.png)
+![20230304201848.png](Assests/20230304201955.png)
 ## For login page.
 We are start by importing axios and useToken same as signuppage, and we are going to do pretty much same thing as signuppage.
 Then, we are going the send an post request of req.body email and password same as the signuppage and we get token out of the response and we are going to send the user to userinfo page with history.
