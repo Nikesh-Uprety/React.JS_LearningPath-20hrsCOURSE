@@ -45,11 +45,13 @@ export const logInRoute = {
 }
 ```
 
-![[LoginINROute.png]]
+
+
+![LoginINROute.png](Assets/LoginINROute.png)
 
 And if I enter, wronge email or password, it says unauthorized.
-![[LOginROuteTest.png]]
 
+![LOginROuteTest.png](Assets/LOginROuteTest.png)
 ## Implementing JWTs on the front end.
 We are going to create two seperate hook ` useToken` & `useUser` in out auth folder .
 
@@ -186,11 +188,11 @@ export const PrivateRoute = props => {
 
 Now I runned my project and checked if it is actually working or not,
 First I signed up a new user and Check the JSON web token it generated for that user.
-![[Pasted image 20230304201848.png]]
 
+![20230304201848.png](Assets/20230304201848.png)
 Then if we delete our token, we get logged out and redirect to the login page.
-![[Pasted image 20230304201955.png]]
 
+![20230304201848.png](Assets/20230304201955.png)
 ## For login page.
 We are start by importing axios and useToken same as signuppage, and we are going to do pretty much same thing as signuppage.
 Then, we are going the send an post request of req.body email and password same as the signuppage and we get token out of the response and we are going to send the user to userinfo page with history.
