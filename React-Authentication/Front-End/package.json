@@ -2,7 +2,7 @@
   "name": "revision",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8000",
+  "proxy": "http://localhost:8080/",
   "dependencies": {
     "@headlessui/react": "^1.7.11",
     "@heroicons/react": "^2.0.16",
@@ -15,6 +15,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.7.1",
+    "react-private-route": "^1.1.2",
     "react-router": "^6.8.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.1",
