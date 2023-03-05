@@ -1,6 +1,6 @@
 import express from 'express';
 import  routes  from './routes/index.js';
-import { initializeDbConnection } from './db.js';
+import {initializeDbConnection } from './db.js';
 
 const PORT = process.env.PORT || 8080;
 

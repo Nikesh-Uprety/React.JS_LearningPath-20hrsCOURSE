@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
-import  ObjectID  from 'mongodb';
+import ObjectID  from 'mongodb';
 import { getDbConnection } from '../db.js';
 
-const updateUserInfoRoute = {
+export const updateUserInfoRoute = {
     path: '/api/users/:userId',
     method: 'put',
     handler: async (req, res) => {
@@ -28,9 +28,10 @@ const updateUserInfoRoute = {
         jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
             if (err) return res.status(401).json({ message: 'Unable to verify token' });
 
-            const { id } = decoded;
+            const { id, isVerified } = decoded;
 
             if (id !== userId) return res.status(403).json({ message: 'Not allowed to update that user\'s data' });
+            if (!isVerified) return res.status(403).json({ message: 'You need to verify your email before you can update your data'})
 
             const db = getDbConnection('react-auth-db');
             const result = await db.collection('users').findOneAndUpdate(
@@ -38,7 +39,7 @@ const updateUserInfoRoute = {
                 { $set: { info: updates } },
                 { returnOriginal: false },
             );
-            const { email, isVerified, info } = result.value;
+            const { email, info } = result.value;
 
             jwt.sign({ id, email, isVerified, info }, process.env.JWT_SECRET, { expiresIn: '2d' }, (err, token) => {
                 if (err) {
@@ -49,4 +50,3 @@ const updateUserInfoRoute = {
         })
     }
 }
-export default updateUserInfoRoute
