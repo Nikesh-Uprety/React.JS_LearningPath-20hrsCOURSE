@@ -586,3 +586,14 @@ export const Routes = () => {
 ```
 
 Some error occur in my code, and I am still trying to figure it out, it is the same error as yesterday. I will update as soon as I figure out that error.
+
+So the error was due to the mongodb version mismatch, I haved copied file package.json and other files from the exercise file folder, and that exercise file folder mongodb version was lower then that which I was currently using, so I checked my mongodb version my typing 
+
+`npm list mongodb`
+And I replaced the older version the my version in the package.json file
+
+So here is the emailverificationsuccess page after clicking the link which came in our email
+![verifyy](Assests/Verify.png)
+
+And after being verified they can update their info, can the verify your account message dissapears
+![afterverify](Assests/afterverify.png)

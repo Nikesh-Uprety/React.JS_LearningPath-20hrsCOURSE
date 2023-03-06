@@ -440,6 +440,11 @@ import updateUserInfoRoute from './updateUserInfoRoute.js';
 
 While testing there is some error which I am figuring out.
 
+So the error was due to the mongodb version mismatch, I haved copied file package.json and other files from the exercise file folder, and that exercise file folder mongodb version was lower then that which I was currently using, so I checked my mongodb version my typing 
+
+`npm list mongodb`
+And I replaced the older version the my version in the package.json file
+![image](Assests/image.png)
 ## Adding logout functionality
 In jwt logout is implemented by basically deleting the JSON token that we have in out local storage.
 We head back towards to our userinfo page

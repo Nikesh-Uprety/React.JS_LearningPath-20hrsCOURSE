@@ -1,6 +1,5 @@
-import pkg from 'mongodb';
-const { MongoClient } = pkg;
-
+import mongodb from 'mongodb';
+const { MongoClient } = mongodb;
 
 let client;
 
@@ -15,3 +14,5 @@ export const getDbConnection = dbName => {
     const db = client.db(dbName);
     return db;
 }
+
+

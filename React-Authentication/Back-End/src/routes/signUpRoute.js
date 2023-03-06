@@ -33,13 +33,14 @@ export const signUpRoute = {
             info: startingInfo,
             isVerified: false,
             verificationString,
+            verificationString,
         });
         const { insertedId } = result;
 
         try {
             await sendEmail({
                 to: email,
-                from: 'upretynikesh021@gmail.com',
+                from: 'upretynikesh123@gmail.com',
                 subject: 'Please verify your email',
                 text: `
                     Thanks for signing up! To verify your email, click here:
