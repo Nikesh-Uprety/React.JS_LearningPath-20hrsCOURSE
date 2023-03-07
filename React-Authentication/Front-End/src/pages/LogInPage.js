@@ -1,17 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { useToken } from '../auth/useToken';
+import { useQueryParams } from '../util/useQueryParams';
 
 export const LogInPage = () => {
-    const [token, setToken] = useToken();
+    const [, setToken] = useToken();
 
     const [errorMessage, setErrorMessage] = useState('');
 
     const [emailValue, setEmailValue] = useState('');
     const [passwordValue, setPasswordValue] = useState('');
 
+    const [googleOauthUrl, setGoogleOauthUrl] = useState('');
+    const { token: oauthToken } = useQueryParams();
+
     const history = useHistory();
+
+    useEffect(() => {
+        if (oauthToken) {
+            setToken(oauthToken);
+            history.push('/');
+        }
+    }, [oauthToken, setToken, history]);
+
+    useEffect(() => {
+        const loadOauthUrl = async () => {
+            try {
+                const response = await axios.get('/auth/google/url');
+                const { url } = response.data;
+                setGoogleOauthUrl(url);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        loadOauthUrl();
+    }, []);
 
     const onLogInClicked = async () => {
         const response = await axios.post('/api/login', {
@@ -42,6 +67,10 @@ export const LogInPage = () => {
                 onClick={onLogInClicked}>Log In</button>
             <button onClick={() => history.push('/forgot-password')}>Forgot your password?</button>
             <button onClick={() => history.push('/signup')}>Don't have an account? Sign Up</button>
+            <button
+                disabled={!googleOauthUrl}
+                onClick={() => { window.location.href = googleOauthUrl }}
+            >Log in with Google</button>
         </div>
     );
 }
