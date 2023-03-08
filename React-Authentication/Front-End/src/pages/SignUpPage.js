@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { useToken } from '../auth/useToken.js';
+import { useToken } from '../auth/useToken';
 
 export const SignUpPage = () => {
     const [token, setToken] = useToken();
@@ -21,7 +21,7 @@ export const SignUpPage = () => {
         });
         const { token } = response.data;
         setToken(token);
-        history.push('/please-verify');
+        history.push(`/please-verify?email=${encodeURIComponent(emailValue)}`);
     }
 
     return (

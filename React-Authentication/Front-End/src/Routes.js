@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { EmailVerificationLandingPage } from './pages/EmailVerificationLandingPage';
+import { EmailVerificationCodePage } from './pages/EmailVerificationCodePage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { LogInPage } from './pages/LogInPage';
 import { SignUpPage } from './pages/SignUpPage';
@@ -18,13 +19,16 @@ export const Routes = () => {
                 <Route path="/verify-email/:verificationString">
                     <EmailVerificationLandingPage />
                 </Route>
+                <Route path="/verify-email" exact>
+                    <EmailVerificationCodePage />
+                </Route>
                 <Route path="/forgot-password">
                     <ForgotPasswordPage />
                 </Route>
                 <Route path="/login">
                     <LogInPage />
                 </Route>
-                <Route path="/reset-password/:passwordResetCode">
+                <Route path="/reset-password/">
                     <PasswordResetLandingPage />
                 </Route>
                 <Route path="/please-verify">
