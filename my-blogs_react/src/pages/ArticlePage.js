@@ -8,6 +8,8 @@ import AddCommentForm from "../components/addcommentform";
 import Notfoundpage from "./NotFoundPage";
 import useUser from '../hooks/useUser';
 
+
+
 const ArticlePage = () => {
   const [articleinfo, setArticleInfo] = useState({ upvotes: 0, comments: [], canUpvote: false });
   const { canUpvote } = articleinfo;
@@ -39,7 +41,6 @@ const addUpvote = async () => {
   const updatedArticle = response.data;
   setArticleInfo(updatedArticle);
 }
-
 
   if (!article){
     return <Notfoundpage />;
