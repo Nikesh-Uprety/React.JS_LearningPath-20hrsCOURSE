@@ -389,4 +389,4 @@ const AddAppointment = ({ onSendAppointment, lastId })
       />
 ```
 # And here is the completed simple petappointment project link, which I hosted in netlify.
-https://tangerine-salmiakki-ab4f23.netlify.app/
+https://reactpetappointmentapp.netlify.app
