@@ -1,6 +1,6 @@
 # React.Js Learning Path
 
-![certification|450](React.JS_LearningPath-20hrsCOURSE/Assests/reactJs_Certification.png)
+![certification|450](https://github.com/Nikesh-Uprety/React.JS_LearningPath-20hrsCOURSE/blob/main/Assests/reactJs_Certification.png))
 ![text|450](https://www.patterns.dev/img/reactjs/react-logo@3x.svg)
 ## In this repo, I completed The 20-hrs React Learning Path course, which you can checkout through line link: 
 https://www.linkedin.com/learning/paths/explore-react-js-development?u=2039756
